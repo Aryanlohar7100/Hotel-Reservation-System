@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation Voucher — StayEase</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: #fff !important; }
+            .voucher-card { border: 1px solid #000 !important; box-shadow: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar (Hidden on print) -->
+    <nav class="navbar navbar-expand-lg stayease-navbar sticky-top no-print">
+        <div class="container">
+            <a class="brand-logo" href="/">
+                <i class="bi bi-buildings-fill text-warning"></i> Stay<span>Ease</span>
+            </a>
+            <div id="navbarAuthSection"></div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Action Controls (Hidden on print) -->
+                <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+                    <a href="/customer-dashboard.html" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i> My Bookings
+                    </a>
+                    <div class="d-flex gap-2">
+                        <button onclick="window.print()" class="btn btn-navy">
+                            <i class="bi bi-printer-fill me-1"></i> Print / Save PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Printable Digital Voucher -->
+                <div id="voucherWrapper" class="voucher-card">
+                    <!-- Voucher Header -->
+                    <div class="voucher-header position-relative">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="text-start">
+                                <h3 class="fw-bold mb-0 text-white font-serif">StayEase</h3>
+                                <div class="small text-warning">Official Hotel Stay Voucher & Confirmation</div>
+                            </div>
+                            <div class="text-end">
+                                <span class="stamp-paid">CONFIRMED</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Voucher Content -->
+                    <div class="voucher-body">
+                        <!-- Reference & Date Banner -->
+                        <div class="p-3 bg-light rounded-3 d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <span class="small text-muted text-uppercase fw-bold d-block">Booking Reference</span>
+                                <span id="vRefCode" class="fs-4 fw-bold text-navy letter-spacing-1">STY-2026-XXXX</span>
+                            </div>
+                            <div class="text-end">
+                                <span class="small text-muted text-uppercase fw-bold d-block">Booking Date</span>
+                                <span id="vBookingDate" class="fw-semibold">22 Oct 2026</span>
+                            </div>
+                        </div>
+
+                        <!-- Hotel & Guest Grid -->
+                        <div class="row g-4 mb-4">
+                            <div class="col-sm-6">
+                                <h6 class="text-muted text-uppercase small fw-bold mb-2">Hospitality Property</h6>
+                                <h5 id="vHotelName" class="fw-bold mb-1">The Grand Horizon Palace</h5>
+                                <div id="vHotelAddress" class="text-secondary small mb-1">88 Marine Drive, Mumbai</div>
+                                <div id="vHotelCity" class="badge bg-warning text-dark">Mumbai</div>
+                            </div>
+                            <div class="col-sm-6">
+                                <h6 class="text-muted text-uppercase small fw-bold mb-2">Registered Guest</h6>
+                                <h5 id="vGuestName" class="fw-bold mb-1">John Doe</h5>
+                                <div id="vGuestEmail" class="text-secondary small mb-1">john@example.com</div>
+                                <div class="badge bg-light text-dark border">
+                                    <i class="bi bi-person-check-fill text-success me-1"></i> Verified Reservation
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Stay Details -->
+                        <div class="row g-3 text-center mb-4">
+                            <div class="col-3 border-end">
+                                <div class="small text-muted text-uppercase fw-bold">Check-In</div>
+                                <div id="vCheckIn" class="fs-5 fw-bold text-navy mt-1">—</div>
+                                <div class="small text-muted">From 2:00 PM</div>
+                            </div>
+                            <div class="col-3 border-end">
+                                <div class="small text-muted text-uppercase fw-bold">Check-Out</div>
+                                <div id="vCheckOut" class="fs-5 fw-bold text-navy mt-1">—</div>
+                                <div class="small text-muted">Until 11:00 AM</div>
+                            </div>
+                            <div class="col-3 border-end">
+                                <div class="small text-muted text-uppercase fw-bold">Duration</div>
+                                <div id="vNights" class="fs-5 fw-bold text-navy mt-1">—</div>
+                                <div class="small text-muted">Consecutive</div>
+                            </div>
+                            <div class="col-3">
+                                <div class="small text-muted text-uppercase fw-bold">Suite Reserved</div>
+                                <div id="vRoomType" class="fs-5 fw-bold text-warning mt-1">—</div>
+                                <div id="vRoomNumber" class="small text-muted">Suite #101</div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Payment Summary -->
+                        <h6 class="text-muted text-uppercase small fw-bold mb-3">Itemized Billing Statement</h6>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr class="text-muted small">
+                                        <th>Description</th>
+                                        <th class="text-center">Nights</th>
+                                        <th class="text-end">Nightly Rate</th>
+                                        <th class="text-end">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <strong id="vItemDesc">Luxury Suite Room Charge</strong>
+                                            <div class="small text-muted">Includes complimentary breakfast, optical fiber WiFi & taxes</div>
+                                        </td>
+                                        <td id="vTableNights" class="text-center fw-semibold">1</td>
+                                        <td id="vTableRate" class="text-end">₹0</td>
+                                        <td id="vTableSubtotal" class="text-end fw-bold">₹0</td>
+                                    </tr>
+                                    <tr class="table-light">
+                                        <td colspan="3" class="fw-bold text-end">Total Amount Paid:</td>
+                                        <td id="vTableTotal" class="fw-bold text-end fs-5 text-navy">₹0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Transaction Audit -->
+                        <div class="p-3 bg-light rounded-3 small text-muted d-flex justify-content-between align-items-center">
+                            <div>
+                                <span>Transaction ID: <strong id="vTxnId" class="text-dark">TXN-XXXX</strong></span>
+                                <span class="ms-3">Payment Method: <strong id="vPaymentMethod" class="text-dark">Credit Card</strong></span>
+                            </div>
+                            <div class="text-success fw-bold">
+                                <i class="bi bi-check-circle-fill"></i> Payment Successful
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-stayease mt-auto no-print">
+        <div class="container text-center small text-muted">
+            © 2026 StayEase Hospitality Systems. Full-Stack Java Architecture.
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const ref = params.get('ref');
+
+            if (!ref) {
+                window.location.href = '/customer-dashboard.html';
+                return;
+            }
+
+            await Auth.init();
+            if (!Auth.currentUser) {
+                window.location.href = `/login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+                return;
+            }
+
+            loadVoucher(ref);
+        });
+
+        async function loadVoucher(ref) {
+            try {
+                const res = await API.get(`/bookings/reference/${ref}`);
+                const b = res.data;
+
+                document.title = `Voucher ${b.bookingReference} — StayEase`;
+                document.getElementById('vRefCode').textContent = b.bookingReference;
+                document.getElementById('vBookingDate').textContent = API.formatDate(b.createdAt);
+
+                document.getElementById('vHotelName').textContent = b.hotelName;
+                document.getElementById('vHotelAddress').textContent = b.hotelAddress;
+                document.getElementById('vHotelCity').textContent = b.hotelCity;
+
+                document.getElementById('vGuestName').textContent = b.customerName;
+                document.getElementById('vGuestEmail').textContent = b.customerEmail;
+
+                document.getElementById('vCheckIn').textContent = API.formatDate(b.checkInDate);
+                document.getElementById('vCheckOut').textContent = API.formatDate(b.checkOutDate);
+                document.getElementById('vNights').textContent = `${b.totalNights} Night${b.totalNights > 1 ? 's' : ''}`;
+                document.getElementById('vRoomType').textContent = b.roomType || 'Deluxe Room';
+                document.getElementById('vRoomNumber').textContent = `Suite #${b.roomNumber}`;
+
+                document.getElementById('vItemDesc').textContent = `${b.roomType || 'Luxury Suite'} (Suite #${b.roomNumber})`;
+                document.getElementById('vTableNights').textContent = b.totalNights;
+                document.getElementById('vTableRate').textContent = API.formatCurrency(b.pricePerNight);
+                document.getElementById('vTableSubtotal').textContent = API.formatCurrency(b.totalAmount);
+                document.getElementById('vTableTotal').textContent = API.formatCurrency(b.totalAmount);
+
+                document.getElementById('vTxnId').textContent = b.transactionId || 'N/A';
+                document.getElementById('vPaymentMethod').textContent = b.paymentMethod || 'Credit Card';
+            } catch (err) {
+                API.showToast('Failed to load voucher: ' + err.message, 'danger');
+            }
+        }
+    </script>
+</body>
+</html>

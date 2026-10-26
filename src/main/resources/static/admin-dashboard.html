@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospitality Admin Portal — StayEase</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-light">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg stayease-navbar sticky-top">
+        <div class="container-fluid px-4">
+            <a class="brand-logo" href="/">
+                <i class="bi bi-buildings-fill text-warning"></i> Stay<span>Ease</span>
+                <span class="badge bg-warning text-dark fs-6 ms-2">Admin Portal</span>
+            </a>
+            <div id="navbarAuthSection"></div>
+        </div>
+    </nav>
+
+    <div class="container-fluid px-4 my-4">
+        <!-- Top KPI Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6 col-xl-3">
+                <div class="stat-card">
+                    <div class="stat-icon bg-success bg-opacity-10 text-success">
+                        <i class="bi bi-currency-rupee"></i>
+                    </div>
+                    <div>
+                        <div id="statRevenue" class="stat-val">₹0</div>
+                        <div class="stat-label">Total Realized Revenue</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="stat-card">
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <div>
+                        <div id="statBookings" class="stat-val">0</div>
+                        <div class="stat-label">Total Reservations</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="stat-card">
+                    <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                        <i class="bi bi-door-open"></i>
+                    </div>
+                    <div>
+                        <div id="statOccupancies" class="stat-val">0</div>
+                        <div class="stat-label">Active Stay Occupancies</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="stat-card">
+                    <div class="stat-icon bg-info bg-opacity-10 text-info">
+                        <i class="bi bi-pie-chart"></i>
+                    </div>
+                    <div>
+                        <div id="statOccupancyRate" class="stat-val">0%</div>
+                        <div class="stat-label">Current Occupancy Rate</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Management Navigation Tabs -->
+        <div class="bg-white rounded-4 border shadow-sm p-4">
+            <ul class="nav nav-pills mb-4" id="adminTabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active fw-bold" id="bookings-tab" data-bs-toggle="pill" data-bs-target="#tabBookings">
+                        <i class="bi bi-card-list me-1"></i> Reservations
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link fw-bold" id="hotels-tab" data-bs-toggle="pill" data-bs-target="#tabHotels">
+                        <i class="bi bi-building me-1"></i> Hotels Management
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link fw-bold" id="rooms-tab" data-bs-toggle="pill" data-bs-target="#tabRooms">
+                        <i class="bi bi-door-closed me-1"></i> Room Inventory
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link fw-bold" id="amenities-tab" data-bs-toggle="pill" data-bs-target="#tabAmenities">
+                        <i class="bi bi-stars me-1"></i> Hospitality Amenities
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="adminTabsContent">
+                <!-- Tab 1: Bookings Management -->
+                <div class="tab-pane fade show active" id="tabBookings">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">All Guest Reservations</h5>
+                        <button onclick="loadAdminBookings()" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light small text-muted text-uppercase">
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Guest</th>
+                                    <th>Hotel & Suite</th>
+                                    <th>Check-In / Out</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Update Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminBookingsTableBody">
+                                <tr><td colspan="7" class="text-center py-4">Loading reservations...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Hotels Management -->
+                <div class="tab-pane fade" id="tabHotels">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">Registered Hotels</h5>
+                        <button class="btn btn-gold btn-sm fw-bold" data-bs-toggle="modal" data-bs-target="#addHotelModal">
+                            <i class="bi bi-plus-lg me-1"></i> Add New Hotel
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light small text-muted text-uppercase">
+                                <tr>
+                                    <th>Hotel</th>
+                                    <th>Location</th>
+                                    <th>Star Rating</th>
+                                    <th>Contact</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminHotelsTableBody">
+                                <tr><td colspan="6" class="text-center py-4">Loading hotels...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Rooms Inventory -->
+                <div class="tab-pane fade" id="tabRooms">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <h5 class="fw-bold mb-0">Suites & Rooms</h5>
+                            <select id="roomFilterHotel" class="form-select form-select-sm" style="width: 250px;">
+                                <option value="">Select a Hotel...</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-gold btn-sm fw-bold" data-bs-toggle="modal" data-bs-target="#addRoomModal">
+                            <i class="bi bi-plus-lg me-1"></i> Add New Suite
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light small text-muted text-uppercase">
+                                <tr>
+                                    <th>Suite #</th>
+                                    <th>Type</th>
+                                    <th>Capacity</th>
+                                    <th>Base Rate</th>
+                                    <th>Amenities</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminRoomsTableBody">
+                                <tr><td colspan="6" class="text-center py-4 text-muted">Select a hotel above to view rooms.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tab 4: Amenities -->
+                <div class="tab-pane fade" id="tabAmenities">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">Hospitality Facilities & Amenities</h5>
+                        <button class="btn btn-gold btn-sm fw-bold" data-bs-toggle="modal" data-bs-target="#addAmenityModal">
+                            <i class="bi bi-plus-lg me-1"></i> Create Amenity
+                        </button>
+                    </div>
+
+                    <div id="amenitiesGrid" class="row g-3">
+                        <div class="col-12 text-center py-4 text-muted">Loading amenities...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Hotel Modal -->
+    <div class="modal fade" id="addHotelModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title fw-bold">Add New Luxury Property</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="addHotelForm">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label small fw-bold">Hotel Name</label>
+                                <input type="text" id="hName" class="form-control" required placeholder="e.g. The Oberoi Palace">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">Star Rating</label>
+                                <input type="number" id="hRating" class="form-control" step="0.1" min="1" max="5" value="4.8" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">City</label>
+                                <input type="text" id="hCity" class="form-control" required placeholder="e.g. Mumbai">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">State</label>
+                                <input type="text" id="hState" class="form-control" required placeholder="e.g. Maharashtra">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold">Full Street Address</label>
+                                <input type="text" id="hAddress" class="form-control" required placeholder="e.g. Nariman Point, Marine Drive">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Contact Email</label>
+                                <input type="email" id="hEmail" class="form-control" required placeholder="mumbai@hotel.com">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Contact Phone</label>
+                                <input type="tel" id="hPhone" class="form-control" required placeholder="+91 22 1234 5678">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold">Image URL (Unsplash or CDN)</label>
+                                <input type="url" id="hImage" class="form-control" placeholder="https://images.unsplash.com/photo-...">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold">Description</label>
+                                <textarea id="hDesc" class="form-control" rows="3" required placeholder="Describe hotel hospitality..."></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-gold w-100 fw-bold mt-4 py-2">Create Hotel Property</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Room Modal -->
+    <div class="modal fade" id="addRoomModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title fw-bold">Add Suite to Inventory</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="addRoomForm">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Select Hotel</label>
+                            <select id="rHotelSelect" class="form-select" required></select>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-bold">Room / Suite Number</label>
+                                <input type="text" id="rNumber" class="form-control" placeholder="e.g. 401" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-bold">Suite Classification</label>
+                                <select id="rType" class="form-select" required>
+                                    <option value="STANDARD">Standard Room</option>
+                                    <option value="DELUXE" selected>Deluxe King Room</option>
+                                    <option value="SUITE">Executive Suite</option>
+                                    <option value="FAMILY_SUITE">Family Grand Suite</option>
+                                    <option value="PRESIDENTIAL">Presidential Suite</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-bold">Adults Capacity</label>
+                                <input type="number" id="rAdults" class="form-control" value="2" min="1" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-bold">Children Capacity</label>
+                                <input type="number" id="rChildren" class="form-control" value="1" min="0" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Nightly Base Rate (INR)</label>
+                            <input type="number" id="rPrice" class="form-control" value="7500" min="500" step="100" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Amenities List (comma-separated)</label>
+                            <input type="text" id="rAmenities" class="form-control" value="WiFi, AC, Smart TV, Ocean View, Mini Bar, Breakfast">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Suite Image URL</label>
+                            <input type="url" id="rImage" class="form-control" placeholder="https://images.unsplash.com/...">
+                        </div>
+                        <button type="submit" class="btn btn-gold w-100 fw-bold py-2">Add Suite to Inventory</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Amenity Modal -->
+    <div class="modal fade" id="addAmenityModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title fw-bold">Create Amenity</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="addAmenityForm">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Amenity Name</label>
+                            <input type="text" id="amName" class="form-control" placeholder="e.g. Infinity Rooftop Pool" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Bootstrap Icon Class</label>
+                            <input type="text" id="amIcon" class="form-control" value="bi-water" placeholder="e.g. bi-wifi, bi-water, bi-car-front-fill" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Description</label>
+                            <textarea id="amDesc" class="form-control" rows="2" placeholder="Facility description..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-gold w-100 fw-bold">Save Amenity</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await Auth.init();
+            if (!Auth.requireAdmin()) return;
+
+            loadStats();
+            loadAdminBookings();
+            loadAdminHotels();
+            loadAmenities();
+
+            // Setup hotel selector for rooms tab
+            document.getElementById('roomFilterHotel').addEventListener('change', (e) => {
+                if (e.target.value) {
+                    loadAdminRooms(e.target.value);
+                }
+            });
+
+            // Add Hotel Form Submit
+            document.getElementById('addHotelForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                try {
+                    await API.post('/hotels', {
+                        name: document.getElementById('hName').value,
+                        starRating: parseFloat(document.getElementById('hRating').value),
+                        city: document.getElementById('hCity').value,
+                        state: document.getElementById('hState').value,
+                        address: document.getElementById('hAddress').value,
+                        contactEmail: document.getElementById('hEmail').value,
+                        contactPhone: document.getElementById('hPhone').value,
+                        imageUrl: document.getElementById('hImage').value,
+                        description: document.getElementById('hDesc').value
+                    });
+                    API.showToast('Hotel property added successfully!', 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('addHotelModal')).hide();
+                    document.getElementById('addHotelForm').reset();
+                    loadAdminHotels();
+                    loadStats();
+                } catch (err) {
+                    API.showToast(err.message, 'danger');
+                }
+            });
+
+            // Add Room Form Submit
+            document.getElementById('addRoomForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                try {
+                    const hotelId = document.getElementById('rHotelSelect').value;
+                    await API.post('/rooms', {
+                        hotelId: parseInt(hotelId),
+                        roomNumber: document.getElementById('rNumber').value,
+                        roomType: document.getElementById('rType').value,
+                        capacityAdults: parseInt(document.getElementById('rAdults').value),
+                        capacityChildren: parseInt(document.getElementById('rChildren').value),
+                        basePricePerNight: parseFloat(document.getElementById('rPrice').value),
+                        amenities: document.getElementById('rAmenities').value,
+                        imageUrl: document.getElementById('rImage').value
+                    });
+                    API.showToast('Room added successfully!', 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('addRoomModal')).hide();
+                    document.getElementById('addRoomForm').reset();
+                    loadAdminRooms(hotelId);
+                    loadStats();
+                } catch (err) {
+                    API.showToast(err.message, 'danger');
+                }
+            });
+
+            // Add Amenity Form Submit
+            document.getElementById('addAmenityForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                try {
+                    const name = document.getElementById('amName').value;
+                    const icon = document.getElementById('amIcon').value;
+                    const description = document.getElementById('amDesc').value;
+                    await API.post(`/amenities?name=${encodeURIComponent(name)}&icon=${encodeURIComponent(icon)}&description=${encodeURIComponent(description)}`);
+                    API.showToast('Amenity registered!', 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('addAmenityModal')).hide();
+                    document.getElementById('addAmenityForm').reset();
+                    loadAmenities();
+                } catch (err) {
+                    API.showToast(err.message, 'danger');
+                }
+            });
+        });
+
+        async function loadStats() {
+            try {
+                const res = await API.get('/admin/stats');
+                const s = res.data;
+                document.getElementById('statRevenue').textContent = API.formatCurrency(s.totalRevenue);
+                document.getElementById('statBookings').textContent = s.totalBookings;
+                document.getElementById('statOccupancies').textContent = s.activeOccupancies;
+                document.getElementById('statOccupancyRate').textContent = s.occupancyRatePercentage + '%';
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function loadAdminBookings() {
+            const tbody = document.getElementById('adminBookingsTableBody');
+            try {
+                const res = await API.get('/admin/bookings');
+                const list = res.data || [];
+
+                if (list.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">No reservations recorded.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = list.map(b => {
+                    return `
+                        <tr>
+                            <td><strong class="text-navy">${b.bookingReference}</strong></td>
+                            <td>
+                                <div><strong>${b.customerName}</strong></div>
+                                <div class="small text-muted">${b.customerEmail}</div>
+                            </td>
+                            <td>
+                                <div><strong>${b.hotelName}</strong></div>
+                                <div class="small text-muted">${b.roomType} (Suite #${b.roomNumber})</div>
+                            </td>
+                            <td>
+                                <div class="small">${API.formatDate(b.checkInDate)} — ${API.formatDate(b.checkOutDate)}</div>
+                                <div class="small text-muted">${b.totalNights} Night(s)</div>
+                            </td>
+                            <td><strong>${API.formatCurrency(b.totalAmount)}</strong></td>
+                            <td><span class="badge ${getStatusBadgeClass(b.bookingStatus)}">${b.bookingStatus}</span></td>
+                            <td>
+                                <select onchange="updateBookingStatus(${b.id}, this.value)" class="form-select form-select-sm" style="width: 140px;">
+                                    <option value="CONFIRMED" ${b.bookingStatus === 'CONFIRMED' ? 'selected' : ''}>CONFIRMED</option>
+                                    <option value="CHECKED_IN" ${b.bookingStatus === 'CHECKED_IN' ? 'selected' : ''}>CHECKED_IN</option>
+                                    <option value="COMPLETED" ${b.bookingStatus === 'COMPLETED' ? 'selected' : ''}>COMPLETED</option>
+                                    <option value="CANCELLED" ${b.bookingStatus === 'CANCELLED' ? 'selected' : ''}>CANCELLED</option>
+                                </select>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-danger py-4">${err.message}</td></tr>`;
+            }
+        }
+
+        function getStatusBadgeClass(status) {
+            switch(status) {
+                case 'CONFIRMED': return 'bg-success';
+                case 'CHECKED_IN': return 'bg-info text-dark';
+                case 'COMPLETED': return 'bg-secondary';
+                case 'CANCELLED': return 'bg-danger';
+                default: return 'bg-dark';
+            }
+        }
+
+        async function updateBookingStatus(bookingId, newStatus) {
+            try {
+                await API.put(`/admin/bookings/${bookingId}/status?status=${newStatus}`);
+                API.showToast(`Reservation #${bookingId} updated to ${newStatus}`, 'success');
+                loadStats();
+                loadAdminBookings();
+            } catch (err) {
+                API.showToast(err.message, 'danger');
+            }
+        }
+
+        async function loadAdminHotels() {
+            const tbody = document.getElementById('adminHotelsTableBody');
+            const roomSel = document.getElementById('roomFilterHotel');
+            const modalSel = document.getElementById('rHotelSelect');
+
+            try {
+                const res = await API.get('/hotels');
+                const list = res.data || [];
+
+                tbody.innerHTML = list.map(h => `
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <img src="${h.imageUrl || ''}" class="rounded-2 object-fit-cover" style="width: 45px; height: 35px;" onerror="this.style.display='none'">
+                                <strong>${h.name}</strong>
+                            </div>
+                        </td>
+                        <td>${h.city}, ${h.state}</td>
+                        <td><i class="bi bi-star-fill text-warning me-1"></i>${h.starRating ? h.starRating.toFixed(1) : '4.5'}</td>
+                        <td class="small">${h.contactPhone || '—'}</td>
+                        <td><span class="badge ${h.active ? 'bg-success' : 'bg-secondary'}">${h.active ? 'ACTIVE' : 'INACTIVE'}</span></td>
+                        <td>
+                            <a href="/hotel-detail.html?id=${h.id}" target="_blank" class="btn btn-outline-secondary btn-sm me-1">
+                                <i class="bi bi-box-arrow-up-right"></i>
+                            </a>
+                            <button onclick="deactivateHotel(${h.id})" class="btn btn-outline-danger btn-sm" ${!h.active ? 'disabled' : ''}>
+                                <i class="bi bi-slash-circle"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                // Populate select options
+                roomSel.innerHTML = '<option value="">Select a Hotel...</option>' + list.map(h => `<option value="${h.id}">${h.name} (${h.city})</option>`).join('');
+                modalSel.innerHTML = list.map(h => `<option value="${h.id}">${h.name} (${h.city})</option>`).join('');
+
+                if (list.length > 0) {
+                    roomSel.value = list[0].id;
+                    loadAdminRooms(list[0].id);
+                }
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-danger">${err.message}</td></tr>`;
+            }
+        }
+
+        async function deactivateHotel(hotelId) {
+            if (!confirm('Are you sure you want to deactivate this hotel?')) return;
+            try {
+                await API.delete(`/hotels/${hotelId}`);
+                API.showToast('Hotel deactivated', 'success');
+                loadAdminHotels();
+            } catch (err) {
+                API.showToast(err.message, 'danger');
+            }
+        }
+
+        async function loadAdminRooms(hotelId) {
+            const tbody = document.getElementById('adminRoomsTableBody');
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-3 text-muted">Loading rooms...</td></tr>';
+            try {
+                const res = await API.get(`/rooms/hotel/${hotelId}`);
+                const list = res.data || [];
+
+                if (list.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-3 text-muted">No rooms configured for this hotel yet.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = list.map(r => `
+                    <tr>
+                        <td><strong>#${r.roomNumber}</strong></td>
+                        <td><span class="room-type-badge">${r.roomType}</span></td>
+                        <td>${r.capacityAdults} Adults + ${r.capacityChildren} Children</td>
+                        <td><strong>${API.formatCurrency(r.basePricePerNight)}</strong></td>
+                        <td class="small text-muted">${r.amenities || '—'}</td>
+                        <td><span class="badge ${r.active ? 'bg-success' : 'bg-secondary'}">${r.active ? 'ACTIVE' : 'INACTIVE'}</span></td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-danger">${err.message}</td></tr>`;
+            }
+        }
+
+        async function loadAmenities() {
+            const grid = document.getElementById('amenitiesGrid');
+            try {
+                const res = await API.get('/amenities');
+                const list = res.data || [];
+
+                if (list.length === 0) {
+                    grid.innerHTML = '<div class="col-12 text-center text-muted">No amenities recorded.</div>';
+                    return;
+                }
+
+                grid.innerHTML = list.map(a => `
+                    <div class="col-sm-6 col-md-4">
+                        <div class="p-3 bg-light rounded-3 border d-flex align-items-center gap-3">
+                            <i class="bi ${a.icon || 'bi-check-circle'} fs-3 text-warning"></i>
+                            <div>
+                                <h6 class="fw-bold mb-0">${a.name}</h6>
+                                <p class="small text-muted mb-0">${a.description || 'Hospitality facility'}</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                grid.innerHTML = `<div class="col-12 text-danger">${err.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

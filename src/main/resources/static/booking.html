@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Reservation — StayEase</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg stayease-navbar sticky-top">
+        <div class="container">
+            <a class="brand-logo" href="/">
+                <i class="bi bi-buildings-fill text-warning"></i> Stay<span>Ease</span>
+            </a>
+            <div id="navbarAuthSection"></div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="row g-4 justify-content-center">
+            <!-- Left: Checkout Details Form -->
+            <div class="col-lg-7">
+                <div class="bg-white p-4 p-md-5 rounded-4 border shadow-sm">
+                    <div class="d-flex align-items-center gap-2 mb-4">
+                        <span class="badge bg-warning text-dark px-3 py-1 fw-bold">Step 2 of 2</span>
+                        <h3 class="fw-bold mb-0">Guest Details & Payment</h3>
+                    </div>
+
+                    <form id="bookingCheckoutForm">
+                        <!-- Guest Info -->
+                        <h5 class="fw-bold mb-3"><i class="bi bi-person-fill text-warning me-2"></i>Primary Guest Information</h5>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-12">
+                                <label class="form-label small fw-bold text-muted">Full Name</label>
+                                <input type="text" id="guestFullName" class="form-control" required placeholder="John Doe">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">Email Address (For Voucher)</label>
+                                <input type="email" id="guestEmail" class="form-control" required placeholder="john@example.com">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">Mobile Number</label>
+                                <input type="tel" id="guestPhone" class="form-control" required placeholder="+91 9876543210">
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Payment Method Selection -->
+                        <h5 class="fw-bold mb-3"><i class="bi bi-credit-card-fill text-warning me-2"></i>Select Payment Method</h5>
+                        <div class="row g-3 mb-4">
+                            <div class="col-sm-6">
+                                <div class="form-check p-3 border rounded-3 h-100 cursor-pointer">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="pmCard" value="CREDIT_CARD" checked>
+                                    <label class="form-check-label fw-bold d-block" for="pmCard">
+                                        <i class="bi bi-credit-card text-primary me-1"></i> Credit / Debit Card
+                                        <div class="small text-muted fw-normal">Visa, Mastercard, RuPay</div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-check p-3 border rounded-3 h-100 cursor-pointer">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="pmUpi" value="UPI">
+                                    <label class="form-check-label fw-bold d-block" for="pmUpi">
+                                        <i class="bi bi-qr-code-scan text-success me-1"></i> Instant UPI
+                                        <div class="small text-muted fw-normal">Google Pay, PhonePe, Paytm</div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-check p-3 border rounded-3 h-100 cursor-pointer">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="pmNet" value="NET_BANKING">
+                                    <label class="form-check-label fw-bold d-block" for="pmNet">
+                                        <i class="bi bi-bank text-warning me-1"></i> Net Banking
+                                        <div class="small text-muted fw-normal">All major Indian banks</div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-check p-3 border rounded-3 h-100 cursor-pointer">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="pmHotel" value="PAY_AT_HOTEL">
+                                    <label class="form-check-label fw-bold d-block" for="pmHotel">
+                                        <i class="bi bi-building-check text-info me-1"></i> Pay at Hotel
+                                        <div class="small text-muted fw-normal">Pay upon check-in desk</div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Concurrency Security Notice -->
+                        <div class="alert alert-light border small text-muted d-flex align-items-center gap-2 mb-4">
+                            <i class="bi bi-shield-check text-success fs-5"></i>
+                            <div>
+                                <strong>Atomic Reservation Guarantee:</strong> Your selected room is verified and reserved atomically to eliminate double-booking conflicts.
+                            </div>
+                        </div>
+
+                        <button type="submit" id="submitBookingBtn" class="btn btn-gold btn-lg w-100 py-3 fw-bold shadow">
+                            <span id="btnText">Confirm & Book Reservation</span>
+                            <span id="btnSpinner" class="spinner-border spinner-border-sm ms-2 d-none"></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right: Order Summary Sidebar -->
+            <div class="col-lg-5">
+                <div class="bg-white p-4 rounded-4 border shadow-sm sticky-top" style="top: 90px;">
+                    <h5 class="fw-bold mb-3">Reservation Summary</h5>
+
+                    <div class="d-flex gap-3 mb-3 pb-3 border-bottom">
+                        <img id="summaryHotelImg" src="" alt="Hotel" class="rounded-3 object-fit-cover shadow-sm" style="width: 100px; height: 80px;">
+                        <div>
+                            <h6 id="summaryHotelName" class="fw-bold mb-1">Loading property...</h6>
+                            <div id="summaryHotelAddress" class="small text-muted mb-1"></div>
+                            <span id="summaryRoomType" class="badge bg-warning text-dark"></span>
+                        </div>
+                    </div>
+
+                    <div class="small mb-3">
+                        <div class="d-flex justify-content-between py-1">
+                            <span class="text-muted">Check-in:</span>
+                            <strong id="summaryCheckIn">—</strong>
+                        </div>
+                        <div class="d-flex justify-content-between py-1">
+                            <span class="text-muted">Check-out:</span>
+                            <strong id="summaryCheckOut">—</strong>
+                        </div>
+                        <div class="d-flex justify-content-between py-1">
+                            <span class="text-muted">Duration:</span>
+                            <strong id="summaryNights">1 Night</strong>
+                        </div>
+                        <div class="d-flex justify-content-between py-1">
+                            <span class="text-muted">Guests:</span>
+                            <strong id="summaryGuests">2 Guests</strong>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="small mb-4">
+                        <div class="d-flex justify-content-between py-1">
+                            <span class="text-muted">Room Rate (<span id="summaryRateNights">1 night</span>):</span>
+                            <span id="summaryBaseAmount" class="fw-semibold">₹0</span>
+                        </div>
+                        <div class="d-flex justify-content-between py-1">
+                            <span class="text-muted">Taxes & Service Fees:</span>
+                            <span class="text-success fw-semibold">Included</span>
+                        </div>
+                        <div class="d-flex justify-content-between py-2 mt-2 border-top">
+                            <span class="fw-bold fs-6">Grand Total:</span>
+                            <span id="summaryTotalAmount" class="fw-bold fs-4 text-navy">₹0</span>
+                        </div>
+                    </div>
+
+                    <div class="text-muted small text-center">
+                        <i class="bi bi-lock-fill me-1"></i> 256-bit SSL encrypted & secure transaction
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-stayease mt-auto">
+        <div class="container text-center small text-muted">
+            © 2026 StayEase Hospitality Systems. Full-Stack Java Architecture.
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        let bookingParams = {};
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            bookingParams = {
+                hotelId: params.get('hotelId'),
+                roomId: params.get('roomId'),
+                checkIn: params.get('checkIn'),
+                checkOut: params.get('checkOut'),
+                guests: parseInt(params.get('guests')) || 2
+            };
+
+            if (!bookingParams.hotelId || !bookingParams.roomId || !bookingParams.checkIn || !bookingParams.checkOut) {
+                API.showToast('Incomplete reservation details. Please re-select your room.', 'danger');
+                setTimeout(() => window.location.href = '/hotels.html', 1500);
+                return;
+            }
+
+            // Check Auth
+            await Auth.init();
+            if (!Auth.currentUser) {
+                const redirect = encodeURIComponent(window.location.pathname + window.location.search);
+                window.location.href = `/login.html?redirect=${redirect}`;
+                return;
+            }
+
+            // Pre-fill user data
+            document.getElementById('guestFullName').value = Auth.currentUser.fullName || '';
+            document.getElementById('guestEmail').value = Auth.currentUser.email || '';
+
+            loadSummary();
+
+            // Submit booking
+            document.getElementById('bookingCheckoutForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const submitBtn = document.getElementById('submitBookingBtn');
+                const btnText = document.getElementById('btnText');
+                const btnSpinner = document.getElementById('btnSpinner');
+
+                submitBtn.disabled = true;
+                btnText.textContent = 'Securing Reservation...';
+                btnSpinner.classList.remove('d-none');
+
+                const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+                try {
+                    const res = await API.post('/bookings', {
+                        hotelId: bookingParams.hotelId,
+                        roomId: bookingParams.roomId,
+                        checkInDate: bookingParams.checkIn,
+                        checkOutDate: bookingParams.checkOut,
+                        totalGuests: bookingParams.guests,
+                        paymentMethod: selectedPayment
+                    });
+
+                    API.showToast('Reservation Confirmed! Reference: ' + res.data.bookingReference, 'success');
+                    setTimeout(() => {
+                        window.location.href = `/booking-confirmation.html?ref=${res.data.bookingReference}`;
+                    }, 1000);
+                } catch (err) {
+                    API.showToast(err.message, 'danger');
+                    submitBtn.disabled = false;
+                    btnText.textContent = 'Confirm & Book Reservation';
+                    btnSpinner.classList.add('d-none');
+                }
+            });
+        });
+
+        async function loadSummary() {
+            try {
+                const [hotelRes, roomRes] = await Promise.all([
+                    API.get(`/hotels/${bookingParams.hotelId}`),
+                    API.get(`/rooms/${bookingParams.roomId}`)
+                ]);
+
+                const hotel = hotelRes.data;
+                const room = roomRes.data;
+
+                const ci = new Date(bookingParams.checkIn);
+                const co = new Date(bookingParams.checkOut);
+                const nights = Math.max(1, Math.ceil(Math.abs(co - ci) / (1000 * 60 * 60 * 24)));
+                const total = Number(room.basePricePerNight) * nights;
+
+                document.getElementById('summaryHotelName').textContent = hotel.name;
+                document.getElementById('summaryHotelAddress').textContent = `${hotel.address}, ${hotel.city}`;
+                document.getElementById('summaryHotelImg').src = hotel.imageUrl || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=400&q=80';
+                document.getElementById('summaryRoomType').textContent = room.roomType ? room.roomType.replace('_', ' ') : 'Deluxe Room';
+
+                document.getElementById('summaryCheckIn').textContent = API.formatDate(bookingParams.checkIn);
+                document.getElementById('summaryCheckOut').textContent = API.formatDate(bookingParams.checkOut);
+                document.getElementById('summaryNights').textContent = `${nights} Night${nights > 1 ? 's' : ''}`;
+                document.getElementById('summaryGuests').textContent = `${bookingParams.guests} Guest${bookingParams.guests > 1 ? 's' : ''}`;
+
+                document.getElementById('summaryRateNights').textContent = `${nights} night${nights > 1 ? 's' : ''}`;
+                document.getElementById('summaryBaseAmount').textContent = API.formatCurrency(total);
+                document.getElementById('summaryTotalAmount').textContent = API.formatCurrency(total);
+            } catch (err) {
+                console.error(err);
+                API.showToast('Failed to load reservation summary: ' + err.message, 'danger');
+            }
+        }
+    </script>
+</body>
+</html>
