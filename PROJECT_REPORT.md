@@ -167,6 +167,10 @@ graph TD
 
 ### 3.1 Entity Relationship (ER) Diagram
 
+![StayEase Relational Database ER Diagram](docs/images/er_diagram.jpg)
+
+*Figure 3.1: StayEase Relational Database Entity-Relationship Diagram showing Users, Hotels, Rooms, Bookings, Booking_Rooms, and Payments entities with Foreign Key linkages.*
+
 ```mermaid
 erDiagram
     USERS ||--o{ BOOKINGS : "places"
@@ -308,7 +312,11 @@ erDiagram
 
 ## Chapter 4: End-to-End Booking Process (Core Mechanism)
 
-### 4.1 Step-by-Step Workflow
+### 4.1 Step-by-Step Workflow & Booking Interface
+
+![StayEase Booking Interface & Confirmation Voucher](docs/images/booking_process.jpg)
+
+*Figure 4.1: StayEase Guest Room Booking Interface with date selection, capacity checks, payment gateway selection, and real-time confirmation voucher generation.*
 
 ```mermaid
 sequenceDiagram
